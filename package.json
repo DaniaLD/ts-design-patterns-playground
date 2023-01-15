@@ -1,0 +1,17 @@
+{
+  "name": "design-patterns",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "tsc",
+    "start:main": "node dist/main.js"
+  },
+  "keywords": [],
+  "author": "Danial Dabirian",
+  "license": "ISC",
+  "devDependencies": {
+    "prettier": "^2.8.2",
+    "typescript": "^4.9.4"
+  }
+}
