@@ -1,9 +1,4 @@
 interface IBuilder {
-    car: Car
-    engine: number
-    color: string
-    customInteriorDesign: boolean
-
     reset(): void
     assembleEngine(): void
     colorize(): void
@@ -11,22 +6,25 @@ interface IBuilder {
     getCar(): Car
 }
 interface ICar {
-    engine: number
-    color: string
-    customInteriorDesign: boolean
-
     showInfo(): void
 }
 
-class BMWFactory implements IBuilder {
+interface IDirector {
+    setBuilder(builder: BMWBuilder): void
+    produceCar(): void
+}
+
+class BMWBuilder implements IBuilder {
     private car: Car
+    private readonly model: string
     private readonly engine: number
     private readonly color: string
     private readonly customInteriorDesign: boolean
 
 
-    constructor(engine: number, color: string, customInteriorDesign: boolean = false) {
+    constructor(model: string, engine: number, color: string, customInteriorDesign: boolean = false) {
         this.reset()
+        this.model = model
         this.color = color
         this.engine = engine
         this.customInteriorDesign = customInteriorDesign
@@ -37,6 +35,7 @@ class BMWFactory implements IBuilder {
     }
 
     assembleEngine(): void {
+        this.car.model = this.model
         this.car.engine = this.engine
     }
 
@@ -56,12 +55,45 @@ class BMWFactory implements IBuilder {
 }
 
 class Car implements ICar{
+    model: string = ''
     engine: number = 0
     color: string = ''
     customInteriorDesign: boolean = false
 
     showInfo() {
-        console.log(`* Engine: ${this.engine}cc\n* color: ${this.color}\n* customInteriorDesign: ${this.customInteriorDesign}`)
+        console.log(`
+        * model: ${this.model}
+        * Engine: ${this.engine}cc
+        * color: ${this.color}
+        * customInteriorDesign: ${this.customInteriorDesign}`)
     }
 }
 
+class Director implements IDirector{
+    private builder: BMWBuilder
+
+    setBuilder(builder: BMWBuilder): void {
+        this.builder = builder
+    }
+
+    produceCar(): void {
+        this.builder.assembleEngine()
+        this.builder.colorize()
+        this.builder.customizeInteriorDesign()
+    }
+}
+
+const client = (director: Director) => {
+    const m4Builder = new BMWBuilder('gt86', 3500, 'red', true)
+    director.setBuilder(m4Builder)
+    director.produceCar()
+    m4Builder.getCar().showInfo()
+
+    const m4GtsBuilder = new BMWBuilder('m4 GTS', 4000, 'black', true)
+    director.setBuilder(m4GtsBuilder)
+    director.produceCar()
+    m4GtsBuilder.getCar().showInfo()
+
+}
+const director = new Director()
+client(director)
